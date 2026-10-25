@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>가상의 휴대폰</title>
+<style>
+:root{--ink:#242332;--muted:#77778a;--glass:rgba(255,255,255,.72);--line:rgba(50,45,70,.12)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 10%,#e5e0ff,transparent 35%),radial-gradient(circle at 90% 80%,#ffdfe8,transparent 34%),#f3f2f8;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:var(--ink)}
+.phone{width:min(390px,100%);height:min(820px,calc(100dvh - 32px));min-height:600px;border:8px solid #262630;border-radius:44px;background:#f8f7fc;box-shadow:0 28px 80px #39304b35, inset 0 0 0 1px #ffffff;overflow:hidden;position:relative}
+.status{height:35px;padding:11px 25px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:700;position:relative;z-index:3}
+.dynamic{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:100px;height:25px;background:#17171c;border-radius:20px}
+.screen{height:calc(100% - 35px);overflow:auto;padding:12px 19px 28px;background:linear-gradient(155deg,#f7f5ff 0%,#f7f7fb 47%,#fff0f4 100%);scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.topline{display:flex;align-items:center;justify-content:space-between;margin:9px 0 18px}
+.eyebrow{font-size:11px;color:var(--muted);letter-spacing:1.5px;font-weight:700}
+h1{font-size:25px;margin:4px 0 0;letter-spacing:-1px}
+.avatar{width:43px;height:43px;border-radius:16px;background:linear-gradient(135deg,#d6ccff,#ffcbdc);display:grid;place-items:center;font-size:22px;box-shadow:0 5px 14px #c8b5e633}
+.search{background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px 14px;color:#9693a5;font-size:13px;margin-bottom:18px}
+.widget{background:linear-gradient(135deg,#7e76b7,#b7a6d9 65%,#e7bfd5);border-radius:23px;padding:18px;color:white;position:relative;overflow:hidden;box-shadow:0 12px 25px #9b8bc333;margin-bottom:22px}
+.widget:after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;background:#ffffff1b;right:-24px;top:-30px}
+.widget small{font-size:11px;opacity:.85;letter-spacing:1px}
+.widget .clock{font-size:39px;font-weight:300;letter-spacing:-1.5px;margin:7px 0 3px}
+.widget p{font-size:12px;margin:0;opacity:.9}
+.section-title{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:15px;margin:20px 2px 12px}
+.section-title span{font-size:11px;color:#8d899e;font-weight:600}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 7px;margin-bottom:21px}
+.app{border:0;background:transparent;color:var(--ink);font:inherit;padding:0;cursor:pointer;text-align:center}
+.app-icon{width:55px;height:55px;border-radius:18px;display:grid;place-items:center;font-size:25px;margin:0 auto 7px;box-shadow:0 5px 12px #3a315010;border:1px solid #ffffffc9}
+.app-name{font-size:10px;color:#5d5a6c}
+.messages{display:flex;flex-direction:column;gap:9px}
+.message{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:17px;padding:11px;text-align:left;width:100%;cursor:pointer;color:inherit}
+.mini-avatar{flex:0 0 42px;height:42px;border-radius:15px;display:grid;place-items:center;font-size:21px;background:linear-gradient(135deg,#f8d9e6,#ddd7ff)}
+.message-info{min-width:0;flex:1}
+.message-info strong{font-size:13px;display:block;margin-bottom:4px}
+.message-info p{font-size:11px;color:#898598;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-meta{align-self:stretch;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;font-size:10px;color:#a09bad}
+.dot{background:#8c7bc6;color:white;border-radius:20px;padding:3px 6px;font-size:9px}
+.bottom-nav{position:sticky;bottom:-28px;margin:22px -19px -28px;padding:13px 22px calc(14px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;background:#ffffffdb;backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.navbtn{border:0;background:transparent;color:#9a96a8;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.navbtn b{font-size:19px;font-weight:500}.navbtn.active{color:#7769b1}
+.page-head{display:flex;align-items:center;gap:12px;margin:15px 0 22px}
+.back{border:0;background:#fff;border:1px solid var(--line);border-radius:13px;width:40px;height:40px;font-size:20px;cursor:pointer;color:var(--ink)}
+.page-head h2{font-size:21px;margin:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+.card h3{font-size:14px;margin:0 0 7px}.card p{font-size:12px;line-height:1.7;color:#777386;margin:0}
+.chatbox{display:flex;flex-direction:column;gap:12px;padding-bottom:14px}
+.chat-date{text-align:center;font-size:10px;color:#aaa4b4;margin:5px}
+.bubble{max-width:82%;padding:11px 13px;border-radius:17px;font-size:12px;line-height:1.6;background:white;border:1px solid var(--line);align-self:flex-start}
+.bubble.me{background:#ded8fa;align-self:flex-end;border-color:transparent;border-bottom-right-radius:5px}
+.bubble:not(.me){border-bottom-left-radius:5px}
+.chat-input{display:flex;gap:8px;margin-top:12px}
+.chat-input input{min-width:0;flex:1;border:1px solid var(--line);border-radius:15px;padding:12px;font:inherit;font-size:12px;background:#fff}
+.chat-input button{border:0;border-radius:14px;background:#8b7dbb;color:#fff;padding:0 14px;font-size:12px}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tile{min-height:105px;border-radius:18px;padding:14px;background:linear-gradient(145deg,#f0eaff,#fff0f5);border:1px solid #ffffff}
+.tile .emoji{font-size:24px}.tile strong{display:block;font-size:13px;margin-top:10px}.tile small{font-size:10px;color:#817b91}
+.note{background:#fff9d9;border-radius:5px 16px 16px 16px;padding:18px;line-height:1.8;font-size:13px;box-shadow:0 5px 15px #a79b5420;transform:rotate(-.5deg)}
+.home-indicator{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:110px;height:4px;border-radius:5px;background:#28272d;z-index:10}
+@media(max-height:680px){.phone{height:calc(100dvh - 16px);min-height:0}.screen{padding-top:5px}.widget{padding:12px}.widget .clock{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="dynamic"></div>
+  <div class="status"><span>9:41</span><span>▮▮▮　◉　▰</span></div>
+  <main class="screen" id="screen"></main>
+  <div class="home-indicator"></div>
+</div>
+<script>
+const screen=document.getElementById('screen');
+const appData=[
+ {name:'메시지',icon:'💬',bg:'#e5e0ff',page:'messages'},
+ {name:'전화',icon:'📞',bg:'#d8f3e5',page:'phone'},
+ {name:'사진',icon:'🌄',bg:'#ffe8d8',page:'photos'},
+ {name:'메모',icon:'📝',bg:'#fff0b8',page:'notes'},
+ {name:'캘린더',icon:'📅',bg:'#ffe0e8',page:'calendar'},
+ {name:'음악',icon:'🎧',bg:'#e3e6ff',page:'music'},
+ {name:'지도',icon:'🗺️',bg:'#d9f0e9',page:'maps'},
+ {name:'설정',icon:'⚙️',bg:'#e8e8ed',page:'settings'}
+];
+const chats=[
+ {name:'서윤',avatar:'🌷',time:'오후 5:42',preview:'아까 말한 거 진짜 비밀이야',unread:'2',messages:[['them','오늘 학교 끝나고 어디 갔어?'],['me','그냥 잠깐 들를 데가 있어서'],['them','아까 말한 거 진짜 비밀이야'],['me','알겠어 ㅋㅋ 나만 알고 있을게']]},
+ {name:'엄마',avatar:'🌼',time:'오후 4:18',preview:'집에 오면 냉장고 확인해 봐',messages:[['them','오늘 늦게 와?'],['me','아니 평소처럼 갈 것 같아'],['them','집에 오면 냉장고 확인해 봐'],['me','응 알겠어!']]},
+ {name:'도현',avatar:'🧸',time:'오후 1:06',preview:'과제 파일 보냈어!',messages:[['them','과제 파일 보냈어!'],['me','헐 고마워'],['them','내일 발표 순서도 확인해 둬'],['me','오케이 🙌']]},
+ {name:'비공개 메모',avatar:'🔒',time:'어제',preview:'잊지 말 것.',messages:[['them','잊지 말 것.'],['them','그날 오후 7시, 오래된 서점 앞.'],['them','혼자 갈 것.']] }
+];
+function header(title,sub='PERSONAL DEVICE'){return `<div class="page-head"><button class="back" onclick="home()">‹</button><div><div class="eyebrow">${sub}</div><h2>${title}</h2></div></div>`}
+function home(){screen.innerHTML=`
+ <div class="topline"><div><div class="eyebrow">SUNDAY, OCTOBER 25</div><h1>좋은 저녁이야.</h1></div><div class="avatar">🪻</div></div>
+ <div class="search">⌕　무엇을 찾으세요?</div>
+ <div class="widget"><small>MY LITTLE SPACE</small><div class="clock">18:26</div><p>오늘도 수고했어. 천천히 쉬어 가기.</p></div>
+ <div class="section-title">앱 보관함 <span>ALL APPS　›</span></div>
+ <div class="apps">${appData.map(a=>`<button class="app" onclick="openApp('${a.page}')"><span class="app-icon" style="background:${a.bg}">${a.icon}</span><span class="app-name">${a.name}</span></button>`).join('')}</div>
+ <div class="section-title">최근 메시지 <span onclick="openApp('messages')">모두 보기　›</span></div>
+ <div class="messages">${chats.slice(0,3).map((c,i)=>messageRow(c,i)).join('')}</div>
+ <div class="bottom-nav"><button class="navbtn active" onclick="home()"><b>⌂</b>홈</button><button class="navbtn" onclick="openApp('messages')"><b>▤</b>메시지</button><button class="navbtn" onclick="openApp('photos')"><b>▧</b>사진</button><button class="navbtn" onclick="openApp('notes')"><b>☷</b>메모</button></div>`}
+function messageRow(c,i){return `<button class="message" onclick="openChat(${i})"><span class="mini-avatar">${c.avatar}</span><span class="message-info"><strong>${c.name}</strong><p>${c.preview}</p></span><span class="msg-meta"><span>${c.time}</span>${c.unread?`<span class="dot">${c.unread}</span>`:''}</span></button>`}
+function openApp(page){
+ if(page==='messages'){screen.innerHTML=header('메시지','MESSAGES')+`<div class="messages">${chats.map(messageRow).join('')}</div>`;return}
+ const pages={
+ phone:header('최근 통화','PHONE')+`<div class="card"><h3>↗　서윤</h3><p>오늘, 오후 5:21 · 발신 통화</p></div><div class="card"><h3>↙　엄마</h3><p>오늘, 오후 3:50 · 수신 통화 · 4분</p></div><div class="card"><h3>↗　도현</h3><p>어제, 오후 8:12 · 발신 통화</p></div><div class="card"><h3>⌨️　키패드</h3><p>가상의 통화 기록입니다.</p></div>`,
+ photos:header('사진첩','MEMORIES')+`<div class="tiles"><div class="tile"><div class="emoji">🌇</div><strong>저녁 하늘</strong><small>사진 12장</small></div><div class="tile"><div class="emoji">☕</div><strong>카페</strong><small>사진 8장</small></div><div class="tile"><div class="emoji">🐈</div><strong>귀여운 순간</strong><small>사진 23장</small></div><div class="tile"><div class="emoji">🎞️</div><strong>즐겨찾기</strong><small>사진 5장</small></div></div><div class="card" style="margin-top:12px"><h3>오늘의 사진</h3><p>아직 공개하지 않은 하루의 조각들. 이 휴대폰은 가상의 인물 설정용입니다.</p></div>`,
+ notes:header('메모','NOTES')+`<div class="note"><strong>잊지 말 것</strong><br><br>□ 서윤에게 답장하기<br>□ 도서관 책 반납하기<br>□ 다음 주 발표 자료 확인<br><br><small>오늘은 조금 일찍 자자.</small></div><div class="card" style="margin-top:15px"><h3>아이디어</h3><p>비 오는 날의 오래된 서점. 창가 자리, 따뜻한 차, 그리고 우연히 다시 만난 사람.</p></div>`,
+ calendar:header('캘린더','CALENDAR')+`<div class="card"><div class="eyebrow">OCTOBER 2026</div><h3 style="font-size:24px;margin-top:8px">25 일요일</h3><p>오늘 예정된 일정은 없습니다.</p></div><div class="card"><h3>10월 27일 · 화요일</h3><p>오전 10:00　팀 과제 회의</p></div><div class="card"><h3>10월 30일 · 금요일</h3><p>오후 4:30　서윤 만나기</p></div>`,
+ music:header('음악','NOW PLAYING')+`<div class="widget" style="margin-top:8px;text-align:center;padding:34px 18px"><div style="font-size:65px">🎧</div><h3 style="font-size:18px">조용한 저녁</h3><p>나만의 플레이리스트</p><div style="font-size:25px;margin-top:24px">Ⅱ　　▶　　↻</div></div><div class="card"><h3>다음 곡</h3><p>01　창문에 맺힌 빗방울<br>02　느린 산책<br>03　집으로 가는 길</p></div>`,
+ maps:header('자주 가는 곳','PLACES')+`<div class="card"><h3>📍 학교</h3><p>평일에 가장 자주 방문하는 장소</p></div><div class="card"><h3>☕ 작은 카페</h3><p>창가 자리가 마음에 드는 곳</p></div><div class="card"><h3>📚 동네 도서관</h3><p>조용히 집중하고 싶을 때</p></div>`,
+ settings:header('설정','SETTINGS')+`<div class="card"><h3>👤 내 프로필</h3><p>이름　　한서아<br>기기　　My Phone 16<br>상태　　개인용</p></div><div class="card"><h3>🔔 알림</h3><p>메시지 알림 켜짐<br>방해 금지　꺼짐</p></div><div class="card"><h3>🔒 개인정보</h3><p>이 화면은 창작용으로 만든 가상의 데이터만 포함합니다.</p></div>`
+ };
+ screen.innerHTML=pages[page]||header('앱');
+}
+function openChat(i){
+ const c=chats[i];
+ screen.innerHTML=header(c.name,'MESSAGES')+`<div class="chatbox"><div class="chat-date">오늘</div>${c.messages.map(m=>`<div class="bubble ${m[0]==='me'?'me':''}">${m[1]}</div>`).join('')}</div><form class="chat-input" onsubmit="sendMessage(event,${i})"><input id="reply" placeholder="메시지 보내기..." autocomplete="off"><button type="submit">전송</button></form>`;
+}
+function sendMessage(e,i){e.preventDefault();const input=document.getElementById('reply');const value=input.value.trim();if(!value)return;chats[i].messages.push(['me',value]);chats[i].preview=value;openChat(i)}
+home();
+</script>
+</body>
+</html>
